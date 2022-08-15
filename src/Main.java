@@ -1,12 +1,15 @@
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-import lists.List;
-import lists.arrayList.ArrayList;
-import lists.linkedList.LinkedList;
-import maps.Map;
-import maps.treeMap.TreeMap;
-import myExceptions.*;
+import java.util.Arrays;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
+import java.util.*;
+import java.util.Random;
+
+//import lists.List;
+//import maps.Map;
+
 
 public class Main {
     /*public static int fact(int n){
@@ -84,9 +87,47 @@ public class Main {
         return rez;
     }*/
 
+    public static double[] task(double[] a) {
+        if(Arrays.stream(a).anyMatch(x -> x<0)) throw new IllegalArgumentException("subzero");
+        return Arrays.stream(a).collect(
+                LinkedHashSet::new,
+                (acc, item) -> {
+                    acc.remove(item);
+                    acc.add(item);
+                },
+                (acc1, acc2) -> acc1.addAll(acc2)
+        ).stream().flatMapToDouble(x -> DoubleStream.of((Double)x)).toArray();
+    }
+
+
     public static void main(String[] args) {
         PrintStream out;
         out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+
+        /*Random rd = new Random();
+        double[] arr = new double[1000000];
+        for (int i = 0; i < arr.length; i++)
+            arr[i] = rd.nextInt(0,arr.length);
+        long time = System.currentTimeMillis();
+        out.println(task(arr).length);
+        out.println(System.currentTimeMillis() - time);*/
+
+
+        List<OrderService.OrderData> listOfOrders = new ArrayList<>();
+        listOfOrders.add(new OrderService.OrderData(OrderService.Type.DELIVERY, "EUR", (long)2000));
+        listOfOrders.add(new OrderService.OrderData(OrderService.Type.DELIVERY, "USD", (long)15));
+        listOfOrders.add(new OrderService.OrderData(OrderService.Type.DELIVERY, "RUB", (long)200));
+        listOfOrders.add(new OrderService.OrderData(OrderService.Type.PICKUP, "RUB", (long)1250));
+        listOfOrders.add(new OrderService.OrderData(OrderService.Type.DELIVERY, "USD", (long)35));
+        listOfOrders.add(new OrderService.OrderData(OrderService.Type.PICKUP, "USD", (long)55));
+        listOfOrders.add(new OrderService.OrderData(OrderService.Type.DELIVERY, "RUB", (long)100));
+        listOfOrders.add(new OrderService.OrderData(OrderService.Type.DELIVERY, "EUR", (long)100));
+        Map<String, Double> rezMap=OrderService.getMaxMinusMinDeliveryMapByCurrency(listOfOrders);
+        for(Map.Entry<String, Double> entry : rezMap.entrySet()){
+            out.println(entry.getKey()+" -> "+entry.getValue());
+        }
+
 
         //File currFiler=new File("C:/Users/79371/Desktop/testingJaba/test.txt");
 
@@ -168,5 +209,8 @@ public class Main {
         double[] c=merge(a,b);
         for(int i=0; i<c.length; i++)
             out.print(c[i]+" ");*/
+
+        //Stream<String> streamFromValues = Stream.of("a1", "a2", "a3", "a2");
+        //out.println(streamFromValues.filter("a2"::equals).count());
     }
 }
